@@ -29,23 +29,23 @@ import java.util.function.Consumer;
  * Usage example:
  * <pre><code>
  * // Create a new YAMLFile instance for "config.yml" in the default folder:
- * YAMLFile yamlFile = new YAMLFile(plugin, "config");
+ * YAMLFile file = new YAMLFile(plugin, "config");
  *
  * // Set custom resource path if needed:
- * yamlFile.setResourcePath("config.yml");
+ * file.setResourcePath("config.yml");
  *
  * // Save defaults if the file does not exist:
- * yamlFile.saveDefaults();
+ * file.saveDefaults();
  *
  * // Retrieve and modify the configuration:
- * FileConfiguration config = yamlFile.getConfiguration();
+ * FileConfiguration config = file.getConfiguration();
  * config.set("setting", "value");
  *
  * // Save changes:
- * yamlFile.save();
+ * file.save();
  *
  * // Update the file using the YAMLUpdater:
- * yamlFile.update();
+ * file.update();
  * </code></pre>
  * </p>
  *
