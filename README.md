@@ -124,6 +124,52 @@ public class MyPlugin extends JavaPlugin {
 
 ---
 
+## Maven / Gradle Installation
+
+To include YAML API to the project, add the following repository and dependency to your build configuration. Replace `${version}` with the desired version tag.
+
+### Maven
+
+Add the repository and dependency to your `pom.xml`:
+
+```xml
+<repositories>
+    <repository>
+        <id>croabeast-repo</id>
+        <url>https://croabeast.github.io/repo/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>me.croabeast</groupId>
+        <artifactId>YAML-API</artifactId>
+        <version>${version}</version>
+        <scope>compile</scope>
+    </dependency>
+</dependencies>
+```
+
+### Gradle
+
+Add the repository and dependency to your `build.gradle`:
+
+```groovy
+repositories {
+    maven {
+        url "https://croabeast.github.io/repo/"
+    }
+}
+
+dependencies {
+    implementation "me.croabeast:YAML-API:${version}"
+}
+```
+
+Replace `${version}` with the appropriate module version.
+
+---
+
 ## Conclusion
 
 **YAML API** is a powerful library for managing YAML configurations in your Bukkit/Spigot/Paper plugins. It streamlines file operations, mapping, and updates while preserving comments and ensuring compatibility across server versions. Whether you are building simple configuration systems or working with complex, nested settings, YAML API provides the tools you need to efficiently manage your plugin’s configuration.

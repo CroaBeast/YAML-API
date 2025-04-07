@@ -1,4 +1,4 @@
-package me.croabeast.file;
+package me.croabeast.common;
 
 import org.jetbrains.annotations.NotNull;
 

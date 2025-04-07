@@ -1,5 +1,7 @@
 package me.croabeast.file;
 
+import me.croabeast.common.Copyable;
+import me.croabeast.common.builder.BaseBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -9,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * Represents a specialized mapping structure that associates integer keys with collections of elements.
  * <p>
- * {@code Mappable} extends {@link Map} and {@link Builder} to provide a fluent interface for performing operations
+ * {@code Mappable} extends {@link Map} and {@link BaseBuilder} to provide a fluent interface for performing operations
  * such as filtering, ordering, and merging values across grouped collections.
  * </p>
  * <p>
@@ -40,10 +42,10 @@ import java.util.function.Supplier;
  * @param <T> The type of elements stored in the collections.
  * @param <C> The type of collection that holds the elements.
  * @param <B> The type of the implementing {@code Mappable} instance.
- * @see Builder
+ * @see BaseBuilder
  */
 public interface Mappable<T, C extends Collection<T>, B extends Mappable<T, C, B>>
-        extends Map<Integer, C>, Iterable<Map.Entry<Integer, C>>, Builder<B>, Copyable<B> {
+        extends Map<Integer, C>, Iterable<Map.Entry<Integer, C>>, BaseBuilder<B>, Copyable<B> {
 
     /**
      * Filters the stored elements based on the given predicate, modifying the current instance.

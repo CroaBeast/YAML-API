@@ -1,4 +1,4 @@
-package me.croabeast.file;
+package me.croabeast.common.builder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <B> the specific builder type extending this interface
  */
-public interface Builder<B extends Builder<B>> {
+public interface BaseBuilder<B extends BaseBuilder<B>> {
 
     /**
      * Provides an instance of the builder, ensuring fluent-style method chaining.
