@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="https://discord.com/invite/gzzhVqgy3b" alt="Support Server">
+        <img alt="Discord" src="https://img.shields.io/discord/826555143398752286?style=for-the-badge&logo=discord&label=Support%20Server&color=635aea">
+    </a>
+</p>
+
 # YAML API
 
 YAML API is a specialized library that simplifies working with YAML configuration files in Bukkit/Spigot/Paper plugins. It provides a robust and consistent interface for loading, saving, updating, and managing YAML-based configurations, along with advanced mapping capabilities for configuration sections and configurable units.
