@@ -83,13 +83,13 @@ public interface Mappable<T, C extends Collection<T>, B extends Mappable<T, C, B
      * Retrieves all stored values merged into a single collection, using the provided supplier to create the collection.
      *
      * @param supplier The supplier used to create a new collection instance.
-     * @param <X>      The type of the resulting collection.
+     * @param <V>      The type of the resulting collection.
      * @return A collection containing all stored values across all keys.
      */
     @NotNull
-    default <X extends Collection<T>> X getStoredValues(Supplier<X> supplier) {
+    default <V extends Collection<T>> V getStoredValues(Supplier<V> supplier) {
         Objects.requireNonNull(supplier);
-        X collection = supplier.get();
+        V collection = supplier.get();
         values().forEach(collection::addAll);
         return collection;
     }

@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
  * </p>
  * <ul>
  *   <li>
- *     <b>Section-based mappables:</b> for mapping {@link ConfigurationSection} instances,
+ *     <b>Section-based mappable:</b> for mapping {@link ConfigurationSection} instances,
  *     represented by {@link AbstractSection} and its nested classes {@code SetImpl} and {@code ListImpl}.
  *   </li>
  *   <li>
- *     <b>Unit-based mappables:</b> for mapping configurable units (instances of {@link ConfigurableUnit}),
+ *     <b>Unit-based mappable:</b> for mapping configurable units (instances of {@link ConfigurableUnit}),
  *     represented by {@link AbstractUnit} and its nested classes {@code SetImpl} and {@code ListImpl}.
  *   </li>
  * </ul>
@@ -43,7 +43,9 @@ final class MapUtils {
         /**
          * Creates an empty {@code AbstractMappable}.
          */
-        AbstractMappable() {}
+        AbstractMappable() {
+            super();
+        }
 
         /**
          * Creates a new {@code AbstractMappable} instance and populates it with the given map.
@@ -51,7 +53,7 @@ final class MapUtils {
          * @param map the initial map data; if {@code null} or empty, the mappable will be empty.
          */
         AbstractMappable(Map<Integer, ? extends C> map) {
-            if (map != null && !map.isEmpty()) putAll(map);
+            super(map == null ? new HashMap<>() : map);
         }
     }
 
@@ -138,7 +140,7 @@ final class MapUtils {
             @NotNull
             public Set order(Comparator<Integer> comparator) {
                 TreeMap<Integer, java.util.Set<ConfigurationSection>> map = new TreeMap<>(comparator);
-                map.putAll(this);
+                forEach((k, v) -> map.put(k, new HashSet<>(v)));
                 return new SetImpl(map);
             }
 
@@ -149,7 +151,9 @@ final class MapUtils {
              */
             @NotNull
             public Set copy() {
-                return new SetImpl(this);
+                Set set = new SetImpl();
+                forEach((k, v) -> set.put(k, new HashSet<>(v)));
+                return set;
             }
 
             /**
@@ -219,7 +223,7 @@ final class MapUtils {
             @NotNull
             public List order(Comparator<Integer> comparator) {
                 TreeMap<Integer, java.util.List<ConfigurationSection>> map = new TreeMap<>(comparator);
-                map.putAll(this);
+                forEach((k, v) -> map.put(k, new ArrayList<>(v)));
                 return new ListImpl(map);
             }
 
@@ -230,7 +234,9 @@ final class MapUtils {
              */
             @NotNull
             public List copy() {
-                return new ListImpl(this);
+                List list = new ListImpl();
+                forEach((k, v) -> list.put(k, new ArrayList<>(v)));
+                return list;
             }
 
             /**
@@ -315,7 +321,7 @@ final class MapUtils {
             @NotNull
             public Set<U> order(Comparator<Integer> comparator) {
                 TreeMap<Integer, java.util.Set<U>> map = new TreeMap<>(comparator);
-                map.putAll(this);
+                forEach((k, v) -> map.put(k, new HashSet<>(v)));
                 return new SetImpl<>(map);
             }
 
@@ -326,7 +332,9 @@ final class MapUtils {
              */
             @NotNull
             public Set<U> copy() {
-                return new SetImpl<>(this);
+                Set<U> set = new SetImpl<>();
+                forEach((k, v) -> set.put(k, new HashSet<>(v)));
+                return set;
             }
 
             /**
@@ -382,7 +390,7 @@ final class MapUtils {
             @NotNull
             public List<U> order(Comparator<Integer> comparator) {
                 TreeMap<Integer, java.util.List<U>> map = new TreeMap<>(comparator);
-                map.putAll(this);
+                forEach((k, v) -> map.put(k, new ArrayList<>(v)));
                 return new ListImpl<>(map);
             }
 
@@ -393,7 +401,9 @@ final class MapUtils {
              */
             @NotNull
             public List<U> copy() {
-                return new ListImpl<U>(this);
+                List<U> list = new ListImpl<>();
+                forEach((k, v) -> list.put(k, new ArrayList<>(v)));
+                return list;
             }
 
             /**

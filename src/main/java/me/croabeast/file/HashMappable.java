@@ -1,37 +1,51 @@
 package me.croabeast.file;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * A concrete implementation of {@link Mappable} backed by a {@link HashMap}.
  * <p>
  * {@code HashMappable} associates integer keys with collections of elements of type {@code T}.
  * It extends {@code HashMap<Integer, C>} and implements the {@code Mappable} interface, providing
- * utility methods for ordering and copying the mapping. This implementation is intended as a base
- * class; certain methods (such as {@link #getStoredValues()}) must be overridden in subclasses or
- * specific instances to provide concrete functionality.
+ * utility methods for ordering and copying the mapping. In addition, it stores a {@link Supplier} to
+ * generate new instances of the collection type {@code C} when needed.
  * </p>
  *
  * @param <T> the type of elements stored in the collections.
  * @param <C> the type of collection that holds the elements.
  * @see Mappable
  */
+@Getter
 public class HashMappable<T, C extends Collection<T>> extends HashMap<Integer, C> implements Mappable<T, C, HashMappable<T, C>> {
 
     /**
-     * Constructs an empty {@code HashMappable}.
+     * A supplier for creating new instances of the collection type {@code C}.
      */
-    public HashMappable() {}
+    private final Supplier<C> supplier;
+
+    /**
+     * Constructs an empty {@code HashMappable} with the specified collection supplier.
+     *
+     * @param supplier a {@link Supplier} used to create new collections of type {@code C}; must not be {@code null}
+     */
+    public HashMappable(Supplier<C> supplier) {
+        super();
+        this.supplier = Objects.requireNonNull(supplier);
+    }
 
     /**
      * Constructs a new {@code HashMappable} with the mappings copied from the provided map.
      *
-     * @param map the map whose entries are to be placed in this mappable.
+     * @param supplier a {@link Supplier} used to create new collections of type {@code C}; must not be {@code null}
+     * @param map      the map whose entries are to be placed in this mappable
      */
-    public HashMappable(Map<Integer, ? extends C> map) {
+    public HashMappable(Supplier<C> supplier, Map<Integer, ? extends C> map) {
         super(map);
+        this.supplier = Objects.requireNonNull(supplier);
     }
 
     /**
@@ -42,49 +56,58 @@ public class HashMappable<T, C extends Collection<T>> extends HashMap<Integer, C
      * containing the ordered entries.
      * </p>
      *
-     * @param comparator the comparator used for ordering the keys.
-     * @return a new {@code HashMappable} instance with entries ordered according to the comparator.
+     * @param comparator the comparator used for ordering the keys; must not be {@code null}
+     * @return a new {@code HashMappable} instance with entries ordered according to the comparator
      */
     @NotNull
     public HashMappable<T, C> order(Comparator<Integer> comparator) {
         TreeMap<Integer, C> map = new TreeMap<>(comparator);
-        map.putAll(this);
-        return new HashMappable<>(map);
+        forEach((k, v) -> {
+            C collection = supplier.get();
+            collection.addAll(v);
+            map.put(k, collection);
+        });
+        return new HashMappable<>(supplier, map);
     }
 
     /**
      * Creates a shallow copy of this {@code HashMappable}.
      * <p>
-     * The returned copy contains the same keys and values as this instance.
+     * The returned copy contains the same keys and values as this instance. Note that the collections
+     * associated with each key are also copied using the supplier, but their elements are not deep-cloned.
      * </p>
      *
-     * @return a new {@code HashMappable} instance with the same data.
+     * @return a new {@code HashMappable} instance with the same data as this instance.
      */
     @NotNull
     public HashMappable<T, C> copy() {
-        return new HashMappable<>(this);
+        HashMappable<T, C> mappable = new HashMappable<>(supplier);
+        forEach((k, v) -> {
+            C collection = supplier.get();
+            collection.addAll(v);
+            mappable.put(k, collection);
+        });
+        return mappable;
     }
 
     /**
-     * Retrieves all stored values combined into a single collection.
+     * Retrieves all stored values across all keys combined into a single collection.
      * <p>
-     * <b>Note:</b> This method is not implemented in {@code HashMappable} and throws an
-     * {@link UnsupportedOperationException}. It must be overridden in a subclass or a concrete
-     * instance to provide the desired behavior.
+     * This method collects all elements from each collection in the mapping and returns a new collection
+     * containing all these elements.
      * </p>
      *
-     * @return a collection containing all values from the mapping.
-     * @throws UnsupportedOperationException if this method is not overridden.
+     * @return a collection containing all values from the mapping
      */
     @NotNull
     public C getStoredValues() {
-        throw new UnsupportedOperationException("getStoredValues");
+        return getStoredValues(supplier);
     }
 
     /**
-     * Returns this instance.
+     * Returns this instance as a {@code HashMappable}.
      *
-     * @return this {@code HashMappable} instance.
+     * @return this {@code HashMappable} instance
      */
     @NotNull
     public HashMappable<T, C> instance() {
