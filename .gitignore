@@ -1,5 +1,5 @@
 # Project exclude paths
 /target/
-/YAMLFile.iml
-/file.iml
+/YAML-API.iml
 /.idea/
+

@@ -1,0 +1,7 @@
+main: me.croabeast.file.plugin.YAMLPlugin
+
+name: YAML-API
+version: '${project.version}'
+prefix: YAML
+authors: [ CroaBeast ]
+api-version: 1.13
