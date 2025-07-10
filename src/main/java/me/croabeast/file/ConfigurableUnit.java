@@ -59,7 +59,7 @@ public interface ConfigurableUnit {
      * @param sender the command sender.
      * @return {@code true} if the sender has the permission, {@code false} otherwise.
      */
-    default boolean hasPerm(CommandSender sender) {
+    default boolean hasPermission(CommandSender sender) {
         return sender.hasPermission(getPermission());
     }
 

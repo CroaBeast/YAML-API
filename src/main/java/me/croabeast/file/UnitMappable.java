@@ -35,7 +35,7 @@ public interface UnitMappable<U extends ConfigurableUnit, C extends Collection<U
 
         for (final C collection : values()) {
             for (U unit : collection)
-                if (unit.hasPerm(player)) return unit;
+                if (unit.hasPermission(player)) return unit;
         }
 
         return null;
