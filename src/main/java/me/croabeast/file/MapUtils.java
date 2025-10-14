@@ -73,7 +73,9 @@ final class MapUtils {
         /**
          * Creates an empty {@code AbstractSection}.
          */
-        AbstractSection() {}
+        AbstractSection() {
+            super();
+        }
 
         /**
          * Creates a new {@code AbstractSection} instance populated with the provided map.
@@ -92,7 +94,9 @@ final class MapUtils {
             /**
              * Creates an empty {@code SetImpl} instance.
              */
-            SetImpl() {}
+            SetImpl() {
+                super();
+            }
 
             /**
              * Creates a {@code SetImpl} instance populated with the provided map.
@@ -175,7 +179,9 @@ final class MapUtils {
             /**
              * Creates an empty {@code ListImpl} instance.
              */
-            ListImpl() {}
+            ListImpl() {
+                super();
+            }
 
             /**
              * Creates a {@code ListImpl} instance populated with the provided map.
@@ -268,7 +274,9 @@ final class MapUtils {
         /**
          * Creates an empty {@code AbstractUnit}.
          */
-        AbstractUnit() {}
+        AbstractUnit() {
+            super();
+        }
 
         /**
          * Creates a new {@code AbstractUnit} instance populated with the provided map.
@@ -289,7 +297,9 @@ final class MapUtils {
             /**
              * Creates an empty {@code SetImpl} instance.
              */
-            SetImpl() {}
+            SetImpl() {
+                super();
+            }
 
             /**
              * Creates a {@code SetImpl} instance populated with the provided map.
@@ -358,7 +368,9 @@ final class MapUtils {
             /**
              * Creates an empty {@code ListImpl} instance.
              */
-            ListImpl() {}
+            ListImpl() {
+                super();
+            }
 
             /**
              * Creates a {@code ListImpl} instance populated with the provided map.

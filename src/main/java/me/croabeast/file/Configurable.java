@@ -86,7 +86,43 @@ public interface Configurable {
      */
     @SuppressWarnings("unchecked")
     default <T> T get(String path, T def) {
-        return (T) getConfiguration().get(path, def);
+        try {
+            return (T) getConfiguration().get(path, def);
+        } catch (Exception e) {
+            return def;
+        }
+    }
+
+    /**
+     * Retrieves a list of values from the configuration at the specified path, with a guaranteed non-empty result.
+     * <p>
+     * Behavior:
+     * <ul>
+     *   <li>If the value at {@code path} is a list, each element is attempted to be cast to {@code T} and
+     *       collected into the resulting list. Elements that fail to cast are ignored.</li>
+     *   <li>If the list exists but ends up empty after casting, a singleton list containing {@code def} is returned.</li>
+     *   <li>If the value at {@code path} is not a list, this method returns a singleton list containing the value
+     *       at {@code path} (or {@code def} if the path is absent).</li>
+     * </ul>
+     *
+     * @param path the configuration path to read.
+     * @param def  the fallback element used when no valid values are found.
+     * @param <T>  the expected element type of the list.
+     * @return a non-empty {@link List} of {@code T} derived from the configuration, or a singleton list with {@code def}.
+     */
+    @SuppressWarnings("unchecked")
+    default <T> List<T> getList(String path, T def) {
+        if (getConfiguration().isList(path)) {
+            List<T> list = new ArrayList<>();
+            for (Object o : getConfiguration().getList(path, new ArrayList<>()))
+                try {
+                    list.add((T) o);
+                } catch (Exception ignored) {}
+
+            return (list.isEmpty()) ? new ArrayList<>(Collections.singletonList(def)) : list;
+        }
+
+        return new ArrayList<>(Collections.singletonList(get(path, def)));
     }
 
     /**
@@ -136,6 +172,18 @@ public interface Configurable {
      * Retrieves a list of strings from the configuration at the specified path.
      *
      * @param path the path to the list.
+     * @param defaultList the default list if the path doesn't exist
+     *
+     * @return a list of strings from the configuration, or defaultList if the path does not exist.
+     */
+    default List<String> toStringList(String path, List<String> defaultList) {
+        return toStringList(getConfiguration(), path, defaultList);
+    }
+
+    /**
+     * Retrieves a list of strings from the configuration at the specified path.
+     *
+     * @param path the path to the list.
      * @return a list of strings from the configuration, or an empty list if the path does not exist.
      */
     default List<String> toStringList(String path) {
@@ -176,13 +224,14 @@ public interface Configurable {
     @NotNull
     default Map<String, ConfigurationSection> getSections(String path, boolean deep) {
         Map<String, ConfigurationSection> map = new LinkedHashMap<>();
+
         ConfigurationSection section = getSection(path);
-        if (section != null) {
+        if (section != null)
             for (String key : section.getKeys(deep)) {
                 ConfigurationSection c = section.getConfigurationSection(key);
                 if (c != null) map.put(key, c);
             }
-        }
+
         return map;
     }
 
@@ -231,16 +280,21 @@ public interface Configurable {
      */
     static List<String> toStringList(ConfigurationSection section, String path, List<String> def) {
         if (section == null) return def;
+
         if (!section.isList(path)) {
-            final Object temp = section.get(path);
-            return temp != null ? Collections.singletonList(temp.toString()) : def;
+            Object temp = section.get(path);
+            return temp != null ?
+                    new ArrayList<>(Collections.singletonList(temp.toString())) :
+                    def;
         }
+
         List<?> raw = section.getList(path, new ArrayList<>());
         if (!raw.isEmpty()) {
             List<String> list = new ArrayList<>();
             raw.forEach(o -> list.add(o.toString()));
             return list;
         }
+
         return def;
     }
 
@@ -270,22 +324,27 @@ public interface Configurable {
     static SectionMappable.Set toSectionMap(@Nullable ConfigurationSection section, @Nullable String path) {
         if (StringUtils.isNotBlank(path) && section != null)
             section = section.getConfigurationSection(path);
-        if (section == null)
-            return SectionMappable.asSet();
+
+        if (section == null) return SectionMappable.asSet();
+
         Set<String> sectionKeys = section.getKeys(false);
-        if (sectionKeys.isEmpty())
-            return SectionMappable.asSet();
+        if (sectionKeys.isEmpty()) return SectionMappable.asSet();
+
         Map<Integer, Set<ConfigurationSection>> map = new HashMap<>();
         for (String key : sectionKeys) {
             ConfigurationSection id = section.getConfigurationSection(key);
             if (id == null) continue;
+
             String perm = id.getString("permission", "DEFAULT");
+
             int def = perm.matches("(?i)default") ? 0 : 1;
             int priority = id.getInt("priority", def);
+
             Set<ConfigurationSection> m = map.getOrDefault(priority, new LinkedHashSet<>());
             m.add(id);
             map.put(priority, m);
         }
+
         return SectionMappable.asSet(map).order(false);
     }
 
